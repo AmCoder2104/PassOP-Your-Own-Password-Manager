@@ -9,22 +9,30 @@ const Manager = () => {
   
   // State to manage the array of passwords
   const [passwordArray, setpasswordArray] = useState([])
+  // Getting pass from DB 
+  const getpass  = async() => { 
+    let get = await fetch("http://localhost:3000/")
+    let ans = await get.json()
+    setpasswordArray(ans)
+    console.log(ans)
+
+   }
 
   // Effect to load passwords from localStorage on component mount
   useEffect(() => {
-    let temp = localStorage.getItem('passwords')
-    if (temp) {
-      setpasswordArray(JSON.parse(temp))
-    }
+    getpass()
+    
   }, [])
 
   // Function to save a new password
-  const savepass = () => {
+  const savepass = async() => {
     // Check if form inputs are valid
     if(form.site.length > 3 && form.username.length > 3 && form.password.length > 3) {
+      await fetch("http://localhost:3000/", {method: 'DELETE', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id:form.id})})
       // Add new password to the array with a unique id
       setpasswordArray([...passwordArray, { ...form, id: uuidv4() }])
-      localStorage.setItem('passwords', JSON.stringify([...passwordArray, { ...form, id: uuidv4() }]))
+       await fetch("http://localhost:3000/", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ...form, id: uuidv4() })})
+      // localStorage.setItem('passwords', JSON.stringify([...passwordArray, { ...form, id: uuidv4() }]))
       setform({ site: "", username: "", password: "" })
       toast.success('Password Saved!', {
         position: "top-right",
@@ -87,16 +95,17 @@ const Manager = () => {
 
   // Function to edit a password
   const Editpass = (id) => { 
-    setform(passwordArray.filter(i => i.id === id)[0]) 
+    setform({...passwordArray.filter(i => i.id === id)[0], id:id}) 
     setpasswordArray(passwordArray.filter(item => item.id !== id)) 
   }
 
   // Function to delete a password
-  const Deletepass = (id) => {
+  const Deletepass = async(id) => {
     let c = confirm('Are you sure you want to delete this password?')
     if (c) {
+      await fetch("http://localhost:3000/", {method: 'DELETE', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id})})
       setpasswordArray(passwordArray.filter(item => item.id !== id))
-      localStorage.setItem("passwords", JSON.stringify(passwordArray.filter(item => item.id !== id))) 
+      // localStorage.setItem("passwords", JSON.stringify(passwordArray.filter(item => item.id !== id))) 
       toast.success('Password Deleted!', {
         position: "top-right",
         autoClose: 1000,
@@ -171,7 +180,7 @@ const Manager = () => {
                         </span>
                       </td>
                       <td className='py-2 text-center w-32 border border-white'>
-                        {item.username}
+                        {"*".repeat(item.username.length)}
                         <span onClick={() => { copytext(item.username) }} className='lordiconcopy size-7 cursor-pointer'>
                           <lord-icon src="https://cdn.lordicon.com/depeqmsz.json" trigger="hover" style={{ 'width': '20px', 'height': '20px', 'paddingTop': '3px', 'paddingLeft': '0px' }}></lord-icon>
                         </span>

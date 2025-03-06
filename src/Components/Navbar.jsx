@@ -22,7 +22,7 @@ const Navbar = () => {
             </ul> */}
         <button className='text-white bg-green-700 my-5 mx-2  rounded-full flex justify-between items-center custom-375:relative custom-375:left-5 custom-360:relative custom-360:left-6 custom-344:relative custom-344:left-5 custom-344:mx-1 '>
           <img className='invert w-8 p-1' src="icons/github.svg" alt="" />
-          <span className='font-bold px-2'><a href="https://github.com/AmCoder2104">GitHub</a></span>
+          <span className='font-bold px-2'><a href="https://github.com/AmCoder2104/PassOP-Your-Own-Password-Manager.git">GitHub</a></span>
         </button>
       </div>
     </nav>
